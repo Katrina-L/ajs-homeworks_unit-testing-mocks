@@ -1,10 +1,5 @@
-import {getLevel} from "../getLevel";
+import { getLevel } from "../getLevel";
 import fetchData from "../http";
-
-// const dataList = [
-//     ["https://server/user/16", 16, 7],
-//     ["https://server/user/'", '', 'Mock this!'],
-// ];
 
 jest.mock("../http");
 
@@ -12,24 +7,25 @@ beforeEach( () => {
     jest.resetAllMocks();
 } );
 
-// test.each(dataList)("", (urlTest, userIdTest, expectedLevel) => {
-//     fetchData.mockReturnValue(JSON.stringify({}));
-//     getLevel(userIdTest);
-//     expect(fetchData).toBeCalledWith(urlTest);
-// });
+test("getLevel with a valid response", () => {
+    const mockResponse = {
+        status: 'ok',
+        level: 7
+    };
 
-test("", () => {
-    fetchData.mockReturnValue(JSON.stringify({}));
-    getLevel(16);
+    fetchData.mockReturnValue(mockResponse);
+    const result = getLevel(16);
     expect(fetchData).toBeCalledWith("https://server/user/16");
+    expect(result).toBe("Ваш текущий уровень: 7");
 });
 
-// test("", () => {
-//     fetchData.mockReturnValue(JSON.stringify({}));
-//     jest.getLevel(NaN);
-//     expect( () => {
-//         fetchData(" ");
-//     }).toThrow('Mock this!');
-// });
+test("getLevel with an unsuccessfull response", () => {
+    const mockResponse = {
+        status: 'error'
+    };
 
-
+    fetchData.mockReturnValue(mockResponse);
+    const result = getLevel(16);
+    expect(fetchData).toBeCalledWith("https://server/user/16");
+    expect(result).toBe('Информация об уровне временно недоступна');
+});
